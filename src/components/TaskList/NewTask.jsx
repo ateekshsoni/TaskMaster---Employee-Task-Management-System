@@ -1,11 +1,29 @@
-import React from 'react'
+import React from 'react';
 
-const NewTask = () => {
+const NewTask = ({ task }) => {
   return (
     <>
-      
+      <div className="h-[200px] shrink-0 w-[300px] bg-lime-500 p-4 rounded-xl flex flex-col justify-between sm:w-[250px] sm:p-3 md:w-[220px] md:p-2">
+        <div className="flex justify-between items-center w-full">
+          <h3 className="bg-red-600 px-3 py-1 rounded text-white text-sm md:text-xs truncate">
+            {task.category}
+          </h3>
+          <h4 className="text-sm md:text-xs truncate"> {task.date} </h4>
+        </div>
+        <h2 className="mt-3 text-2xl font-bold md:text-lg truncate text-center">
+          {task.title}
+        </h2>
+        <p className="text-sm mt-1 md:text-xs line-clamp-2">
+          {task.description}
+        </p>
+        <div className="mt-2">
+          <button className="bg-green-500 text-xs px-2 py-1 rounded-lg text-white md:px-1 md:py-0.5">
+            Accept Task
+          </button>
+        </div>
+      </div>
     </>
-  )
-}
+  );
+};
 
-export default NewTask
+export default NewTask;

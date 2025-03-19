@@ -7,7 +7,10 @@ import { AuthContext } from "./context/AuthProvider";
 const App = () => {
   const [user, setUser] = useState(null);
   const [loggedInUserData, setLoggedInUserData] = useState(null);
-  const authData = useContext(AuthContext);
+  const {userData , refresh} = useContext(AuthContext);
+  const authData = userData;
+
+
   useEffect(() => {
     // Initialize local storage with employee and admin data
     setLocalStorage();
@@ -43,15 +46,16 @@ const App = () => {
     } else {
       console.log("Invalid Login");
     }
+    refresh();
   };
 
   return (
     <>
       {!user ? <Login handleLogin={handleLogin} /> : ""}
       {user == "admin" ? (
-        <AdminDashboard />
+        <AdminDashboard changeUser={setUser} />
       ) : user == "employee" ? (
-        <EmployeeDashboard data={loggedInUserData} /> // Pass employee data
+        <EmployeeDashboard changeUser={setUser} data={loggedInUserData} /> // Pass employee data
       ) : (
         ""
       )}
