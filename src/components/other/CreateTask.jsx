@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../context/AuthProvider";
 const CreateTask = () => {
-  const {userData , refresh} = useContext(AuthContext);
+  const { userData } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     taskTitle: "",
     taskDate: "",
@@ -42,7 +42,6 @@ const CreateTask = () => {
     })
     if (updated) {
       localStorage.setItem('employees', JSON.stringify(data));
-      refresh();
     }
     console.log(data);
     setFormData({
