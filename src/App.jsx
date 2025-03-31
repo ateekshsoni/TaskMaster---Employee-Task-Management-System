@@ -4,11 +4,30 @@ import EmployeeDashboard from "./components/Dashboard/EmployeeDashboard";
 import AdminDashboard from "./components/Dashboard/AdminDashboard";
 import { setLocalStorage } from "./utils/localStorage";
 import { AuthContext } from "./context/AuthProvider";
+
 const App = () => {
   const [user, setUser] = useState(null);
   const [loggedInUserData, setLoggedInUserData] = useState(null);
-  const {userData , refresh} = useContext(AuthContext);
+  const { userData, refresh } = useContext(AuthContext);
 
+  // Initialize localStorage only once when the app first loads
+  useEffect(() => {
+    // Check if localStorage has been initialized before
+    const isInitialized = localStorage.getItem("isStorageInitialized");
+    
+    if (!isInitialized) {
+      // First time loading the app - initialize localStorage
+      setLocalStorage();
+      // Mark as initialized so we don't reset data on future loads
+      localStorage.setItem("isStorageInitialized", "true");
+      console.log("localStorage initialized for the first time");
+    } else {
+      console.log("localStorage already initialized, using existing data");
+    }
+    
+    // Refresh context to load current data
+
+  }, []);  // Empty dependency array means this runs once on mount
 
   useEffect(() => {
     if (userData) {
@@ -17,23 +36,23 @@ const App = () => {
         const parsedUser = JSON.parse(loggedInUser);
         setUser(parsedUser.role);
         if (parsedUser.role === "employee") {
-          setLoggedInUserData(parsedUser.data); // Retrieve employee data from localStorage
+          setLoggedInUserData(parsedUser.data);
         }
       }
     }
   }, [userData]);
 
   const handleLogin = (email, password) => {
-    if (email == "admin1@gmail.com" && password == "7890") {
+    if (email === "admin1@gmail.com" && password === "7890") {
       localStorage.setItem("loggedInUser", JSON.stringify({ role: "admin" }));
-      setUser("admin"); // Set user as 'admin'
+      setUser("admin");
     } else if (userData) {
       const employee = userData.employees.find(
-        (e) => e.email == email && e.password == password
+        (e) => e.email === email && e.password === password
       );
       if (employee) {
-        setUser("employee"); // Set user as 'employee'
-        setLoggedInUserData(employee); // Store employee data
+        setUser("employee");
+        setLoggedInUserData(employee);
         localStorage.setItem(
           "loggedInUser",
           JSON.stringify({ role: "employee", data: employee })
@@ -43,16 +62,15 @@ const App = () => {
       console.log("Invalid Login");
     }
     refresh();
-    console.log('refreshCalled')
   };
 
   return (
     <>
       {!user ? <Login handleLogin={handleLogin} /> : ""}
-      {user == "admin" ? (
+      {user === "admin" ? (
         <AdminDashboard changeUser={setUser} />
-      ) : user == "employee" ? (
-        <EmployeeDashboard changeUser={setUser} data={loggedInUserData} /> // Pass employee data
+      ) : user === "employee" ? (
+        <EmployeeDashboard changeUser={setUser} data={loggedInUserData} />
       ) : (
         ""
       )}
