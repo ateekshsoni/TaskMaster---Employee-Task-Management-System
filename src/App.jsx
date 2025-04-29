@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import Login from "./components/Auth/Login";
 import EmployeeDashboard from "./components/Dashboard/EmployeeDashboard";
 import AdminDashboard from "./components/Dashboard/AdminDashboard";
 import { setLocalStorage } from "./utils/localStorage";
 import { AuthContext } from "./context/AuthProvider";
+import LoginPage from "./components/Auth/LoginPage";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -66,7 +66,7 @@ const App = () => {
 
   return (
     <>
-      {!user ? <Login handleLogin={handleLogin} /> : ""}
+      {!user ? <LoginPage handleLogin={handleLogin} /> : ""}
       {user === "admin" ? (
         <AdminDashboard changeUser={setUser} />
       ) : user === "employee" ? (
