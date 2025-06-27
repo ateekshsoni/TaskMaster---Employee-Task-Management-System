@@ -4,11 +4,28 @@ import AdminDashboard from "./components/Dashboard/AdminDashboard";
 import { setLocalStorage } from "./utils/localStorage";
 import { AuthContext } from "./context/AuthProvider";
 import LoginPage from "./components/Auth/LoginPage";
+import MaintenancePage from "./components/Maintenance/MaintenancePage";
 
 const App = () => {
   const [user, setUser] = useState(null);
   const [loggedInUserData, setLoggedInUserData] = useState(null);
   const { userData, refresh } = useContext(AuthContext);
+  
+  // Set to true to show maintenance page, false to show normal app
+  const [isMaintenanceMode, setIsMaintenanceMode] = useState(true);
+
+  // Add keyboard shortcut to toggle maintenance mode (Ctrl+Shift+M)
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.ctrlKey && event.shiftKey && event.key === 'M') {
+        setIsMaintenanceMode(prev => !prev);
+        console.log('Maintenance mode toggled:', !isMaintenanceMode);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isMaintenanceMode]);
 
   // Initialize localStorage only once when the app first loads
   useEffect(() => {
@@ -66,13 +83,19 @@ const App = () => {
 
   return (
     <>
-      {!user ? <LoginPage handleLogin={handleLogin} /> : ""}
-      {user === "admin" ? (
-        <AdminDashboard changeUser={setUser} />
-      ) : user === "employee" ? (
-        <EmployeeDashboard changeUser={setUser} data={loggedInUserData} />
+      {isMaintenanceMode ? (
+        <MaintenancePage />
       ) : (
-        ""
+        <>
+          {!user ? <LoginPage handleLogin={handleLogin} /> : ""}
+          {user === "admin" ? (
+            <AdminDashboard changeUser={setUser} />
+          ) : user === "employee" ? (
+            <EmployeeDashboard changeUser={setUser} data={loggedInUserData} />
+          ) : (
+            ""
+          )}
+        </>
       )}
     </>
   );
